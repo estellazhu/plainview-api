@@ -1,0 +1,9 @@
+{
+  "latimes" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "a[itemprop='author']", "fieldName": "author"},
+      {"tag" : "time.trb_ar_dateline_time", "fieldName": "date"}
+    ]
+  }
+}

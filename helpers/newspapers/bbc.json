@@ -1,0 +1,9 @@
+{
+  "bbc" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "div.byline", "fieldName": "author"},
+      {"tag" : "div.date--v2", "fieldName": "date"}
+    ]
+  }
+}

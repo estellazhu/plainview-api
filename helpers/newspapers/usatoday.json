@@ -1,0 +1,9 @@
+{
+  "usatoday" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "span.asset-metabar-author", "fieldName": "author"},
+      {"tag" : "span.asset-metabar-time", "fieldName": "date"}
+    ]
+  }
+}

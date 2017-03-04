@@ -1,0 +1,9 @@
+{
+  "nypost" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "p.byline > a", "fieldName": "author"},
+      {"tag" : "p.byline-date", "fieldName": "date"}
+    ]
+  }
+}

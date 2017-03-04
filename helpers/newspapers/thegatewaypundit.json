@@ -1,0 +1,9 @@
+{
+  "thegatewaypundit" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "span.entry-author-name", "fieldName": "author"},
+      {"tag" : "span.entry-meta-content", "fieldName": "date"}
+    ]
+  }
+}

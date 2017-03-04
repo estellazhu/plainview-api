@@ -1,0 +1,37 @@
+{
+  "name": "plainview-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PlainviewData/plainview-api.git"
+  },
+  "author": "Daniel Balagula",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/PlainviewData/plainview-api/issues"
+  },
+  "homepage": "https://github.com/PlainviewData/plainview-api#readme",
+  "dependencies": {
+    "aws-sdk": "^2.22.0",
+    "body-parser": "^1.17.0",
+    "bottleneck": "^1.15.1",
+    "cors": "^2.8.1",
+    "dotenv": "^4.0.0",
+    "express": "^4.15.0",
+    "fetch": "^1.1.0",
+    "mongoose": "^4.8.5",
+    "noodlejs": "^0.3.2",
+    "passport": "^0.3.2",
+    "passport-google-oauth20": "^1.0.0",
+    "shortid": "^2.2.6",
+    "valid-url": "^1.0.9",
+    "webshot": "^0.18.0",
+    "winston": "^2.3.1"
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "reddit" : {
+    "tagsRetrieval": [
+      {"tag" : "div.usertext-body", "fieldName": "content"},
+      {"tag" : "a.author may-blank", "fieldName": "author"},
+      {"tag" : "time", "fieldName": "date"},
+      {"tag" : "div.score > span.number", "fieldName": "upvotes"}
+    ]
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "huffingtonpost" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "span.author-card__details__name", "fieldName": "author"},
+      {"tag" : "span.timestamp__date--published", "fieldName": "date"}
+    ]
+  }
+}

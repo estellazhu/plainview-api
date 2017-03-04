@@ -1,0 +1,11 @@
+{
+  "politico" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "p.byline > span > a[rel~='author']", "fieldName": "author"},
+      {"tag" : "p.timestamp > time", "fieldName": "date"},
+      {"tag" : "p.updated > time", "fieldName": "updatedTime"}
+
+    ]
+  }
+}

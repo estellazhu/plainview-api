@@ -1,0 +1,9 @@
+{
+  "dailymail" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "a.author", "fieldName": "author"},
+      {"tag" : "span.article-timestamp", "fieldName": "date"}
+    ]
+  }
+}

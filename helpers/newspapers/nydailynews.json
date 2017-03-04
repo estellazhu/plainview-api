@@ -1,0 +1,9 @@
+{
+  "nydailynews" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "a[rel~='author']", "fieldName": "author", "doubleCheck": "true"},
+      {"tag" : "div#ra-date-published", "fieldName": "date", "doubleCheck": "true"}
+    ]
+  }
+}

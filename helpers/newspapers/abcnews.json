@@ -1,0 +1,8 @@
+"abcnews": {
+  "tagsRetrieval": [
+    {"tag" : "p", "fieldName": "content"},
+    {"tag" : "div.author", "fieldName": "author"},
+    {"tag" : "span.timestamp", "fieldName": "date"}
+  ],
+  "url" : "http://www.abcnews.com"
+}

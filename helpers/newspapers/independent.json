@@ -1,0 +1,9 @@
+{
+  "independent" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "span[itemprop='name'] > a", "fieldName": "author"},
+      {"tag" : "time", "fieldName": "date"}
+    ]
+  }
+}

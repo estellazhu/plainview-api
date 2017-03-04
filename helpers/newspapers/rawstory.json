@@ -1,0 +1,9 @@
+{
+  "rawstory" : {
+    "tagsRetrieval": [
+      {"tag" : "p", "fieldName": "content"},
+      {"tag" : "a[rel~='author']", "fieldName": "author"},
+      {"tag" : "div.blog-author > a", "fieldName": "date"}
+    ]
+  }
+}
