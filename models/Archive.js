@@ -6,6 +6,8 @@ var Schema = mongoose.Schema;
 var ObjectId = mongoose.SchemaTypes.ObjectId;
 var shortid = require('shortid');
 
+var Article = require('./Article');
+
 module.exports = mongoose.model('Archive', new Schema({
 	_id: {
 		type: String,
@@ -16,6 +18,8 @@ module.exports = mongoose.model('Archive', new Schema({
 	text: String,
 	surroundingText: String,
 	screenshot_url: String,
+	noodle_scraped: Boolean,
+	article: {type: ObjectId, ref: Article},
 	times: {
 		initiated: {type: Date},
 		website_checked: Number,

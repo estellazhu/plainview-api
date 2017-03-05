@@ -85,7 +85,9 @@ function checkWebpageForText(url, text){
 			} else {
 				reject({status: 400, description: "Could not find text"});
 			}
-		});
+		}).catch(function(err){
+			reject(err);
+		})
 	});
 }
 
@@ -127,6 +129,7 @@ function validateArchives(archives, callback){
 	var pendingArchives = [];
 	var passedArchives = [];
 	var failedArchives = [];
+	if (archives === undefined || archives === null) { callback({status: 400, description: "No archives"}); }
 	archives.forEach(function(archive){
 		if (shortid.isValid(archive._id) === false) { failedArchives.push(archive); } else { pendingArchives.push(archive); }
 	});

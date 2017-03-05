@@ -8,25 +8,30 @@ var path = require('path');
 var utils = require('./tools');
 
 var getData = function(url){
-	return new Promise(function(resolve){
+	return new Promise(function(resolve, reject){
 		var content = {};
 		var jsonToReturn = {};
 		var domainTags;
+		var domain = utils.getDomain(url);
 
-		var domain = utils.getDomain(url);		
-		fs.readFile(path.join(__dirname, "./newspapers/" + domain + ".json"), 'utf8', function (err, data) {
-			if (err) throw err;
-			domainTags = JSON.parse(data);
-			scrape(url, domainTags[domain].tagsRetrieval, 0, content)
-				.then(function(content){
-					for (var property in content) {
-						if (content.hasOwnProperty(property)) {
-							jsonToReturn[property] = content[property][0].results.toString();
+		var fileName = path.join(__dirname, "./newspapers/" + domain + ".json");
+		if (fs.existsSync(fileName)){
+			fs.readFile(fileName, 'utf8', function (err, data) {
+				if (err) throw err;
+				domainTags = JSON.parse(data);
+				scrape(url, domainTags[domain].tagsRetrieval, 0, content)
+					.then(function(content){
+						for (var property in content) {
+							if (content.hasOwnProperty(property)) {
+								jsonToReturn[property] = content[property][0].results.toString();
+							}
 						}
-					}
-					resolve(jsonToReturn);
-				});
-		});
+						resolve(jsonToReturn);
+					});
+			});
+		} else {
+			reject({status: 400, description: "Website unsupported"});
+		}
 	});
 };
 

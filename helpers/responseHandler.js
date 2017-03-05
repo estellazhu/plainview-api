@@ -16,7 +16,6 @@ const genericStatusCodeDescriptions = {
 };
 
 var handleResponse = function(data, res){
-	console.log(data);
 	if (data.description === undefined){
 		data.description = genericStatusCodeDescriptions[data.status];
 	}
