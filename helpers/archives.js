@@ -50,9 +50,9 @@ function createArchive(data, callback){
 	}).then(function(){
 		return utils.readFile(data.newArchiveScreenshotFilename);
 	}).then(function(pictureData){
-		return utils.takeTime(dbTools.uploadArchiveImage(data.newArchiveId, pictureData));
+		//return utils.takeTime(dbTools.uploadArchiveImage(data.newArchiveId, pictureData));
 	}).then(function(times){
-		data.timesTaken.s3_upload = times.time;
+		//data.timesTaken.s3_upload = times.time;
 		utils.deleteFile(data.newArchiveScreenshotFilename);
 		return dbTools.uploadArchive(data.newArchiveId, data.url, data.text, data.surroundingText, data.timesTaken);
 	}).then(function(newArchive){
@@ -110,8 +110,8 @@ function takeScreenshot(url, filename, mouseX, mouseY){
 function getArchiveById(id, callback){
 	//gets a archive stored in the db based on an id
 	if (shortid.isValid(id) === false){
-		data = {status: 400, description: "Invalid archive id"};
-		utils.errorHandler("Invalid id requested: " + id); callback(data);
+		utils.errorHandler("Invalid id requested: " + id);
+		callback({status: 400, description: "Invalid archive id"});
 	} else {
 		dbTools.getArchiveById(id)
 		.then(function(result){
