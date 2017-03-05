@@ -25,7 +25,9 @@ app.use('/', quickRoutes);
 app.use('/archives', archives);
 
 app.get('/', function (req, res) {
-	res.sendFile(__dirname + '/public/test.html');
+	res.send('API: GET /archives/id\n' + 
+			'POST /archives/\n' + 
+			'GET /validateArchives');
 });
 
 app.listen(process.env.PORT || 3000, function () {
