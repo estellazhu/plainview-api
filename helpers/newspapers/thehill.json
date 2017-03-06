@@ -3,7 +3,8 @@
     "tagsRetrieval": [
       {"tag" : "p", "fieldName": "content"},
       {"tag" : "span.submitted-by > a", "fieldName": "author"},
-      {"tag" : "span.submitted-date", "fieldName": "date"}
+      {"tag" : "span.submitted-date", "fieldName": "date"},
+      {"tag" : "h1.title", "fieldName": "headline"}
     ]
   }
 }

@@ -18,6 +18,7 @@ mongoose.connect(config.MLAB_DB_CONNECTION, function(err){
 });
 
 var Archive = require('../models/Archive');
+var Article = require('../models/Article');
 
 function uploadArchiveImage(id, pictureData) {
 	//saves an image to the current image database
@@ -38,7 +39,7 @@ function uploadArchiveImage(id, pictureData) {
 	});
 }
 
-function uploadArchive(id, url, text, timesTaken){
+function uploadArchive(id, url, text, timesTaken, articleId){
 	//saves a archive to the current database
 	//return dbFunctions["postArchiveToMongoDb"+config.CURRENT_DB](id, url, text, timesTaken);
 	return new Promise(function(resolve, reject){
@@ -48,10 +49,43 @@ function uploadArchive(id, url, text, timesTaken){
 			text: text,
 			screenshot_url: config.AWS_S3_URL + id,
 			created_by: "Daniel",
-			times: timesTaken
+			times: timesTaken,
+			article: articleId
 		}).save(function(err, newArchive){
 			if (err) { console.log(err); reject({status: 500, description: "Internal error"}); } else {
 				resolve(newArchive);
+			}
+		});
+	});
+}
+
+function uploadArticle(id, url, text, author, date){
+	return new Promise(function(resolve, reject){
+		new Article({
+			_id: id,
+			url: url,
+			text: text,
+			author: author,
+			date: date,
+		}).save(function(err, newArticle){
+			if (err) { console.log(err); reject({status: 500, description: "Internal error"}); } else {
+				console.log(newArticle);
+				resolve(newArticle);
+			}
+		});
+	});
+}
+
+function addArticleRevision(id, text){
+	return new Promise(function(resolve, reject){
+		Article.findByIdAndUpdate(id,
+		{$push: {'text': text}},
+		{safe: true, upsert: true}, function(err){
+			if (err) {
+				utils.errorHandler(err);
+				reject({status: 500, description: "Internal error"});
+			} else {
+				resolve();
 			}
 		});
 	});
@@ -71,6 +105,20 @@ function getArchiveById(id){
 				resolve({status: 200, description: "OK", archive: found});
 			}
 		});
+	});
+}
+
+function checkForSimilarArticles(url){
+	//saves a archive to the current database
+	//return dbFunctions["checkForSimilarArchivesFromMongoDb"+config.CURRENT_DB](url, text);
+	return new Promise(function(resolve, reject){
+		Article.find(
+			{'url': url},
+			function(err, foundArticles){
+				if (err) { utils.errorHandler(err); reject(err); }
+				resolve(foundArticles);
+			}
+		);
 	});
 }
 
@@ -95,6 +143,9 @@ function checkForSimilarArchives(url, text){
 module.exports = {
 	uploadArchiveImage: uploadArchiveImage,
 	uploadArchive: uploadArchive,
+	uploadArticle: uploadArticle,
 	getArchiveById: getArchiveById,
 	checkForSimilarArchives: checkForSimilarArchives,
+	addArticleRevision: addArticleRevision,
+	checkForSimilarArticles: checkForSimilarArticles
 };

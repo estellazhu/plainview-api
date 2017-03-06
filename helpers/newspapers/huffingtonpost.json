@@ -3,7 +3,8 @@
     "tagsRetrieval": [
       {"tag" : "p", "fieldName": "content"},
       {"tag" : "span.author-card__details__name", "fieldName": "author"},
-      {"tag" : "span.timestamp__date--published", "fieldName": "date"}
+      {"tag" : "span.timestamp__date--published", "fieldName": "date"},
+      {"tag" : "h1.headline__title", "fieldName": "headline"}
     ]
   }
 }

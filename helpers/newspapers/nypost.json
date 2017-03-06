@@ -3,7 +3,8 @@
     "tagsRetrieval": [
       {"tag" : "p", "fieldName": "content"},
       {"tag" : "p.byline > a", "fieldName": "author"},
-      {"tag" : "p.byline-date", "fieldName": "date"}
+      {"tag" : "p.byline-date", "fieldName": "date"},
+      {"tag" : "div.article-header > h1", "fieldName": "headline"}
     ]
   }
 }

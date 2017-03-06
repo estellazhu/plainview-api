@@ -4,6 +4,7 @@
       {"tag" : "p", "fieldName": "content"},
       {"tag" : "a.author", "fieldName": "author"},
       {"tag" : "span.article-timestamp", "fieldName": "date"}
+      {"tag" : "div#js-article-text > h1", "fieldName": "headline"}
     ]
   }
 }

@@ -3,7 +3,8 @@
     "tagsRetrieval": [
       {"tag" : "p", "fieldName": "content"},
       {"tag" : "a[rel~='author']", "fieldName": "author"},
-      {"tag" : "div.blog-author > a", "fieldName": "date"}
+      {"tag" : "div.blog-author > a", "fieldName": "date"},
+      {"tag" : "h1.blog-title", "fieldName": "headline"}
     ]
   }
 }

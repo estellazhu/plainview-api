@@ -2,7 +2,8 @@
   "tagsRetrieval": [
     {"tag" : "p", "fieldName": "content"},
     {"tag" : "div.author", "fieldName": "author"},
-    {"tag" : "span.timestamp", "fieldName": "date"}
+    {"tag" : "span.timestamp", "fieldName": "date"},
+    {"tag" : "header.article-header > h1", "fieldName": "headline"}
   ],
   "url" : "http://www.abcnews.com"
 }

@@ -3,7 +3,8 @@
     "tagsRetrieval": [
       {"tag" : "p", "fieldName": "content"},
       {"tag" : "a.byauthor", "fieldName": "author"},
-      {"tag" : "span.bydate", "fieldName": "date"}
+      {"tag" : "span.bydate", "fieldName": "date"},
+      {"tag" : "h1[itemprop='headline']", "fieldName": "headline"}
     ]
   }
 }

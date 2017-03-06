@@ -39,27 +39,57 @@ function createArchive(data, callback){
 	Promise.all([
 		dbTools.checkForSimilarArchives(data.url, data.text),
 		utils.takeTime(checkWebpageForText(data.url, data.text, data.html)),
-		utils.takeTime(takeScreenshot(data.url, data.newArchiveScreenshotFilename, data.mouseX, data.mouseY))
-	]).then(function(times){
-		data.timesTaken.website_checked  = times[1].time;
-		data.timesTaken.screenshot_taken = times[2].time;
-		if (times[0].length > 0){
- 			data.archive = times[0][0];
-			throw {similarArchiveFound:true};
+		utils.takeTime(takeScreenshot(data.url, data.newArchiveScreenshotFilename, data.mouseX, data.mouseY)),
+		dbTools.checkForSimilarArticles(data.url)
+	]).then(function(results){
+		try {
+			data.timesTaken.website_checked  = results[1].time;
+			data.timesTaken.screenshot_taken = results[2].time;
+			data.article = results[1].functionReturn;
+			if (results[0].length > 0){
+	 			data.archive = results[0][0];
+				throw {similarArchiveFound:true};
+			}
+			if (results[3] && results[3].text != data.article.content){
+				data.newArticleId = results[3]._id;
+				dbTools.addArticleRevision(results[3]._id, data.article);
+			} else if (results[3] === undefined || results[3] === null) {
+				data.newArticleId = utils.generateIds(1);
+				dbTools.uploadArticle(data.newArticleId, data.url, data.article.content, data.article.author, data.article.date);
+			} else if (results[3]) {
+				data.newArticleId = results[3]._id;
+			}
+		} catch (err) {
+			if (err.similarArchiveFound){
+				throw (err);
+			} else {
+				utils.errorHandler(err);
+				throw {status: 500, description: "Internal error"};
+			}
 		}
 	}).then(function(){
 		return utils.readFile(data.newArchiveScreenshotFilename);
 	}).then(function(pictureData){
 		//return utils.takeTime(dbTools.uploadArchiveImage(data.newArchiveId, pictureData));
 	}).then(function(times){
-		//data.timesTaken.s3_upload = times.time;
+		try {
+			//data.timesTaken.s3_upload = times.time;
+		} catch (err){
+			throw {status: 500, description: "Internal error"};
+		}
 		utils.deleteFile(data.newArchiveScreenshotFilename);
-		return dbTools.uploadArchive(data.newArchiveId, data.url, data.text, data.surroundingText, data.timesTaken);
+		return dbTools.uploadArchive(data.newArchiveId, data.url, data.text, data.surroundingText, data.timesTaken, data.newArticleId);
 	}).then(function(newArchive){
-		data.status = 201;
-		data.description = "OK";
-		data.archive = newArchive;
-		callback(data);
+		try {
+			data.status = 201;
+			data.description = "OK";
+			data.archive = newArchive;
+			callback(data);
+		} catch (err) {
+			utils.errorHandler(err);
+			throw {status: 500, description: "Internal error"};
+		}
+		return;
 	}).catch(function(chainBreaker){
 		utils.deleteFile(data.newArchiveScreenshotFilename);
 		if (chainBreaker.similarArchiveFound){
@@ -80,10 +110,14 @@ function checkWebpageForText(url, text){
 	return new Promise(function(resolve,reject){
 	scraper.getData(url)
 		.then(function(data){
-			if (data.content.indexOf(text) !== -1){
-				resolve();
+			if (data.headline.indexOf(text) !== -1 || data.content.indexOf(text) !== -1){
+				resolve(data);
 			} else {
-				reject({status: 400, description: "Could not find text"});
+				reject({
+					status: 400, 
+					description: "Could not find text", 
+					internalDescription: "checkWebpageForText: " + url + " " + text
+				});
 			}
 		}).catch(function(err){
 			reject(err);
@@ -102,7 +136,12 @@ function takeScreenshot(url, filename, mouseX, mouseY){
 			}
 		};
 		webshot(url, filename, function(err) {
-			if (err) { utils.errorHandler(err); reject({status: 500, description: "Internal error"}); } else {
+			if (err) { 
+				reject({
+					status: 500, description: "Internal error", 
+					internalDescription: "takeScreenshot: " + url + " " + filename
+				}); 
+		} else {
 				resolve();
 			}
 		});
@@ -118,7 +157,11 @@ function getArchiveById(id, callback){
 		dbTools.getArchiveById(id)
 		.then(function(result){
 			callback({status: result.status, description: result.description, archive: result.archive});
-		});
+			return;
+		}).catch(function(err){
+			callback({status: err.status, description: err.description});
+			utils.errorHandler({status: 500, internalDescription: "getArchiveById: " + id })
+		})
 	}
 }
 
@@ -129,7 +172,7 @@ function validateArchives(archives, callback){
 	var pendingArchives = [];
 	var passedArchives = [];
 	var failedArchives = [];
-	if (archives === undefined || archives === null) { callback({status: 400, description: "No archives"}); }
+	if (archives === undefined || archives === null) { callback({status: 400, description: "No archives"}); return; }
 	archives.forEach(function(archive){
 		if (shortid.isValid(archive._id) === false) { failedArchives.push(archive); } else { pendingArchives.push(archive); }
 	});
@@ -147,7 +190,8 @@ function validateArchives(archives, callback){
 		}
 		failedArchives = failedArchives.concat(pendingArchives);
 	});
-	callback({status: 200, failedArchives: failedArchives, passedArchives: passedArchives})
+	callback({status: 200, failedArchives: failedArchives, passedArchives: passedArchives});
+	return;
 }
 
 function isValidArchiveText(text){

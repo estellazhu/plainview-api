@@ -5,7 +5,7 @@
       {"tag" : "p.byline > span > a[rel~='author']", "fieldName": "author"},
       {"tag" : "p.timestamp > time", "fieldName": "date"},
       {"tag" : "p.updated > time", "fieldName": "updatedTime"}
-
+      {"tag" : "header > h1", "fieldName": "headline"}
     ]
   }
 }
