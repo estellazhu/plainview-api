@@ -38,33 +38,40 @@ function createArchive(data, callback){
 
 	Promise.all([
 		dbTools.checkForSimilarArchives(data.url, data.text),
-		utils.takeTime(checkWebpageForText(data.url, data.text, data.html)),
 		utils.takeTime(takeScreenshot(data.url, data.newArchiveScreenshotFilename, data.mouseX, data.mouseY)),
+		utils.takeTime(scraper.getData(data.url)),
 		dbTools.checkForSimilarArticles(data.url)
 	]).then(function(results){
+		data.newArticleId = utils.generateIds(1);
 		try {
-			data.timesTaken.website_checked  = results[1].time;
-			data.timesTaken.screenshot_taken = results[2].time;
-			data.article = results[1].functionReturn;
-			if (results[0].length > 0){
+			if (results[0].length > 0 && false){
 	 			data.archive = results[0][0];
 				throw {similarArchiveFound:true};
-			}
-			if (results[3] && results[3].text != data.article.content){
-				data.newArticleId = results[3]._id;
-				dbTools.addArticleRevision(results[3]._id, data.article);
-			} else if (results[3] === undefined || results[3] === null) {
-				data.newArticleId = utils.generateIds(1);
-				dbTools.uploadArticle(data.newArticleId, data.url, data.article.content, data.article.author, data.article.date);
-			} else if (results[3]) {
-				data.newArticleId = results[3]._id;
+			} else {
+				data.timesTaken.website_scraped = results[2].time;
+				data.timesTaken.screenshot_taken = results[1].time;
+				data.article = results[2].functionReturn;
+				if (data.article.headline.indexOf(data.text) === -1 && data.article.content.indexOf(data.text) === -1){
+					throw {status: 400, description: "Could not find text"};
+				}
+				if (results[3].length === 0 || results[3] === null || results[3] === undefined){
+					data.articleId = utils.generateIds(1);
+					dbTools.uploadArticle(data.articleId, data.url, data.article.content, data.article.author, data.article.date_posted);
+				} else if (results[3].length > 0 && results[3].content != data.article.content){
+					data.articleId = results[3]._id;
+					dbTools.addArticleRevision(results[3]._id, data.article.content);
+				} else {
+					data.articleId = results[3]._id;
+				}
 			}
 		} catch (err) {
 			if (err.similarArchiveFound){
 				throw (err);
 			} else {
 				utils.errorHandler(err);
-				throw {status: 500, description: "Internal error"};
+				if (err.status && err.description) { throw(err); } else {
+					throw {status: 500, description: "Internal error"};
+				}
 			}
 		}
 	}).then(function(){
@@ -78,13 +85,11 @@ function createArchive(data, callback){
 			throw {status: 500, description: "Internal error"};
 		}
 		utils.deleteFile(data.newArchiveScreenshotFilename);
-		return dbTools.uploadArchive(data.newArchiveId, data.url, data.text, data.surroundingText, data.timesTaken, data.newArticleId);
+		return dbTools.uploadArchive(data.newArchiveId, data.url, data.text, data.timesTaken, data.articleId);
 	}).then(function(newArchive){
 		try {
-			data.status = 201;
-			data.description = "OK";
 			data.archive = newArchive;
-			callback(data);
+			callback({archive: newArchive, status: 201, description: "OK"});
 		} catch (err) {
 			utils.errorHandler(err);
 			throw {status: 500, description: "Internal error"};
@@ -93,8 +98,7 @@ function createArchive(data, callback){
 	}).catch(function(chainBreaker){
 		utils.deleteFile(data.newArchiveScreenshotFilename);
 		if (chainBreaker.similarArchiveFound){
-			data.status = 200;
-			callback(data);
+			callback({archive: chainBreaker.similarArchiveFound, status: 200, description: "OK"});
 			return;
 		} else {
 			data.status = chainBreaker.status;
@@ -102,26 +106,6 @@ function createArchive(data, callback){
 			utils.errorHandler(chainBreaker);
 			return;
 		}
-	});
-}
-
-function checkWebpageForText(url, text){
-	//checks a webpage for the archive in html
-	return new Promise(function(resolve,reject){
-	scraper.getData(url)
-		.then(function(data){
-			if (data.headline.indexOf(text) !== -1 || data.content.indexOf(text) !== -1){
-				resolve(data);
-			} else {
-				reject({
-					status: 400, 
-					description: "Could not find text", 
-					internalDescription: "checkWebpageForText: " + url + " " + text
-				});
-			}
-		}).catch(function(err){
-			reject(err);
-		})
 	});
 }
 
@@ -200,7 +184,6 @@ function isValidArchiveText(text){
 
 module.exports = {
 	takeScreenshot: takeScreenshot,
-	checkWebpageForText: checkWebpageForText,
 	createArchive: createArchive,
 	getArchiveById: getArchiveById,
 	validateArchives: validateArchives,

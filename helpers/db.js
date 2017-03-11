@@ -69,7 +69,6 @@ function uploadArticle(id, url, text, author, date){
 			date: date,
 		}).save(function(err, newArticle){
 			if (err) { console.log(err); reject({status: 500, description: "Internal error"}); } else {
-				console.log(newArticle);
 				resolve(newArticle);
 			}
 		});
@@ -103,6 +102,23 @@ function getArchiveById(id){
 				resolve({status: 404, description: "Could not find archive with id."});
 			} else {
 				resolve({status: 200, description: "OK", archive: found});
+			}
+		});
+	});
+}
+
+function getArticleById(id){
+	//saves a archive to the current database
+	//return db Functions["getArchiveByIdFromMongoDb"+config.CURRENT_DB](id);
+	return new Promise(function(resolve, reject) {
+		Article.findById(id, function (err, found) {
+			if (err) {
+				utils.errorHandler(err); reject({status: 500, description: "Internal error"}); return;
+			} else if (found === null){
+				utils.errorHandler("Could not find article requested: " + id); 
+				resolve({status: 404, description: "Could not find article with id."});
+			} else {
+				resolve({status: 200, description: "OK", article: found});
 			}
 		});
 	});
@@ -147,5 +163,6 @@ module.exports = {
 	getArchiveById: getArchiveById,
 	checkForSimilarArchives: checkForSimilarArchives,
 	addArticleRevision: addArticleRevision,
-	checkForSimilarArticles: checkForSimilarArticles
+	checkForSimilarArticles: checkForSimilarArticles,
+	getArticleById: getArticleById
 };

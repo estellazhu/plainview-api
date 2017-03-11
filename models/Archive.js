@@ -19,10 +19,12 @@ module.exports = mongoose.model('Archive', new Schema({
 	surroundingText: String,
 	screenshot_url: String,
 	noodle_scraped: Boolean,
-	article: {type: ObjectId, ref: Article},
+	article: {
+		type: String,
+	},
 	times: {
 		initiated: {type: Date},
-		website_checked: Number,
+		website_scraped: Number,
 		screenshot_taken: Number,
 		s3_upload: Number,
 		db_saved: Number,

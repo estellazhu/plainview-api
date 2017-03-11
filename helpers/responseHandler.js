@@ -24,9 +24,7 @@ var handleResponse = function(data, res){
 	} else if (data.status == 301) {
 		res.redirect(data.redirect);
 	} else {
-		if (data.archive){
-			res.status(data.status).json(data.archive);
-		}
+		res.status(data.status).json(data);
 	}
 };
 
