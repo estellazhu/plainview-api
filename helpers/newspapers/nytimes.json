@@ -1,10 +1,17 @@
 {
-  "nytimes" : {
-    "tagsRetrieval": [
-      {"tag" : "p", "fieldName": "content"},
-      {"tag" : "span.byline-author", "fieldName": "author"},
-      {"tag" : "p.byline-dateline > time.dateline", "fieldName": "date"},
-      {"tag" : "h1#headline", "fieldName": "headline"},      
-    ]
-  }
+	"nytimes": {
+		"tagsRetrieval": [{
+			"tag": "p",
+			"fieldName": "content"
+		}, {
+			"tag": "span.byline-author",
+			"fieldName": "author"
+		}, {
+			"tag": "p.byline-dateline > time.dateline",
+			"fieldName": "date"
+		}, {
+			"tag": "h1#headline",
+			"fieldName": "headline"
+		}]
+	}
 }
