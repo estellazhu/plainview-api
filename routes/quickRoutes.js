@@ -8,9 +8,9 @@ var utils = require('../helpers/tools');
 var express = require('express'),
 	router = express.Router();
 
-router.get('/checkArchives', function(req, res){
+router.post('/checkArchives', function(req, res){
 	//checks whether archives match in the db
-	archiveTools.validateArchives(req.archives, function(data){
+	archiveTools.validateArchives(req.body.archives, function(data){
 		responseHandler.handleResponse(data, res);
 	});
 });
