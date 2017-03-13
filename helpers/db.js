@@ -59,14 +59,15 @@ function uploadArchive(id, url, text, timesTaken, articleId){
 	});
 }
 
-function uploadArticle(id, url, text, author, date){
+function uploadArticle(article){
 	return new Promise(function(resolve, reject){
 		new Article({
-			_id: id,
-			url: url,
-			text: text,
-			author: author,
-			date: date,
+			_id: article.id,
+			url: article.url,
+			text: article.content,
+			author: article.author,
+			date_posted: article.date,
+			headline: article.headline
 		}).save(function(err, newArticle){
 			if (err) { console.log(err); reject({status: 500, description: "Internal error"}); } else {
 				resolve(newArticle);

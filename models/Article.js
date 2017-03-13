@@ -12,8 +12,9 @@ module.exports = mongoose.model('Article', new Schema({
 	},
 	domain: String,
 	url: String,
+	headline: String,
 	text: [String],
-	authors: [String],
+	author: String,
 	archive_is_url: String,
 	date_posted: String
 }));

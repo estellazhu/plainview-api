@@ -42,7 +42,6 @@ function createArchive(data, callback){
 		utils.takeTime(scraper.getData(data.url)),
 		dbTools.checkForSimilarArticles(data.url)
 	]).then(function(results){
-		data.newArticleId = utils.generateIds(1);
 		try {
 			if (results[0].length > 0 && false){
 	 			data.archive = results[0][0];
@@ -55,8 +54,9 @@ function createArchive(data, callback){
 					throw {status: 400, description: "Could not find text"};
 				}
 				if (results[3].length === 0 || results[3] === null || results[3] === undefined){
-					data.articleId = utils.generateIds(1);
-					dbTools.uploadArticle(data.articleId, data.url, data.article.content, data.article.author, data.article.date_posted);
+					data.article.id = utils.generateIds(1);
+					data.articleId = data.article.id;
+					dbTools.uploadArticle(data.article);
 				} else if (results[3].length > 0 && results[3].content != data.article.content){
 					data.articleId = results[3]._id;
 					dbTools.addArticleRevision(results[3]._id, data.article.content);
@@ -96,6 +96,7 @@ function createArchive(data, callback){
 		}
 		return;
 	}).catch(function(chainBreaker){
+		console.log(chainBreaker);
 		utils.deleteFile(data.newArchiveScreenshotFilename);
 		if (chainBreaker.similarArchiveFound){
 			callback({archive: chainBreaker.similarArchiveFound, status: 200, description: "OK"});
@@ -154,27 +155,27 @@ function validateArchives(archives, callback){
 	//TODO: don't use nested array search
 	//make this return a promise
 	var pendingArchives = [];
-	var passedArchives = [];
+	var validArchives = [];
 	var failedArchives = [];
+	var pendingArchivesIds = [];
 	if (archives === undefined || archives === null) { callback({status: 400, description: "No archives"}); return; }
 	archives.forEach(function(archive){
-		if (shortid.isValid(archive._id) === false) { failedArchives.push(archive); } else { pendingArchives.push(archive); }
+		if (shortid.isValid(archive._id) === false) { failedArchives.push(archive); } else { pendingArchivesIds.push(archive._id); pendingArchives.push(archive); }
 	});
 	Archive.find({
-		'_id': { $in: pendingArchives }
+		'_id': { $in: pendingArchivesIds }
 	}, function(err, foundArchives){
 		if (err) { utils.errorHandler(err); callback(err); }
 		for (var i=0; i<pendingArchives.length; i++){
 			for(var j=0; j<foundArchives.length; j++){
-				if (pendingArchives[i]._id === foundArchives[j]._id && utils.isSimilarArchivePlainText(pendingArchives[i],foundArchives[j].surroundingText)){
-					passedArchives.push(pendingArchives[i]);
-					pendingArchives.splice(i,1);
+				if (pendingArchives[i]._id === foundArchives[j]._id && utils.isSimilarArchivePlainText(pendingArchives[i].text,foundArchives[j].text)){
+					validArchives.push(pendingArchives[i]._id);
 				}
 			}
 		}
 		failedArchives = failedArchives.concat(pendingArchives);
+		callback({status: 200, validArchives: validArchives});
 	});
-	callback({status: 200, failedArchives: failedArchives, passedArchives: passedArchives});
 	return;
 }
 

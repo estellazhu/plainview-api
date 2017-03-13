@@ -106,15 +106,16 @@ function isSimilarArchivePlainText(newText, savedText){
 	//TODO: Trailing whitespaces, punctuations
 	//      Account for content type (tweet, article, etc.)
 	//      No extra characters, useless words, etc.
-	if (newText === savedText){
-		return {type: "identical"};
+	if (newText === undefined || savedText === undefined) { return; }
+	if (newText == savedText){
+		return true;
 	} else if (newText.length > savedText.length) {
-		return {type: "original"};
+		return false;
 	} else if (newText.length < savedText.length) {
 		if (savedText.includes(newText)){
-			return {type: "archive"};
+			return true;
 		} else {
-			return {type: "original"};
+			return false;
 		}
 	}
 }
