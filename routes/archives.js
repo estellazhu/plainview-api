@@ -2,6 +2,7 @@
 "use strict";
 
 var archiveTools = require('../helpers/archives');
+var articleTools = require('../helpers/articles');
 var responseHandler = require('../helpers/responseHandler');
 
 var express = require('express'),
@@ -14,6 +15,14 @@ router.get('/:archive_id', function(req,res){
 	//gets a archive with the associated id
 	archiveTools.getArchiveById(req.params.archive_id, function(data){
 		responseHandler.handleResponse(data, res);
+	});
+});
+
+router.get('/a/:archive_id/:article_id', function(req,res){
+	archiveTools.getArchiveById(req.params.archive_id, function(archive){
+		articleTools.getArticleById(archive.article, function(article){
+			responseHandler.handleResponse({archive: archive, article: article}, res);
+		});
 	});
 });
 
