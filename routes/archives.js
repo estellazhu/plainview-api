@@ -19,11 +19,9 @@ router.get('/:archive_id', function(req,res){
 });
 
 router.get('/a/:archive_id', function(req,res){
-	archiveTools.getArchiveById(req.params.archive_id, function(archive){
-		console.log(archive);
-		articleTools.getArticleById(archive.article, function(article){
-			console.log(article);
-			responseHandler.handleResponse({archive: archive, article: article}, res);
+	archiveTools.getArchiveById(req.params.archive_id, function(archiveResult){
+		articleTools.getArticleById(archiveResult.archive.article, function(articleResult){
+			responseHandler.handleResponse({archive: archiveResult, article: articleResult}, res);
 		});
 	});
 });
