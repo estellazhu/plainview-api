@@ -21,6 +21,7 @@ router.get('/:archive_id', function(req,res){
 router.get('/a/:archive_id', function(req,res){
 	archiveTools.getArchiveById(req.params.archive_id, function(archive){
 		articleTools.getArticleById(archive.article, function(article){
+			console.log(article);
 			responseHandler.handleResponse({archive: archive, article: article}, res);
 		});
 	});
