@@ -22,7 +22,7 @@ router.get('/a/:archive_id', function(req,res){
 	archiveTools.getArchiveById(req.params.archive_id, function(archiveResult){
 		articleTools.getArticleById(archiveResult.archive.article, function(articleResult){
 			console.log(articleResult);
-			responseHandler.handleResponse({archive: archiveResult, article: articleResult}, res);
+			responseHandler.handleResponse({archive: archiveResult, article: articleResult, status: 200}, res);
 		});
 	});
 });
